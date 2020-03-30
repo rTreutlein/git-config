@@ -1,0 +1,12 @@
+------------------------------------------------------------------------------
+name:          myxmonad
+version:       0.13
+category:      Graphics
+build-type:    Simple
+cabal-version: >=1.8
+
+------------------------------------------------------------------------------
+executable myxmonad
+  main-is: xmonad.hs
+  ghc-options: -Wall -Werror -fno-warn-missing-signatures
+  build-depends: base, xmonad, xmonad-contrib

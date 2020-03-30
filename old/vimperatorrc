@@ -1,0 +1,5 @@
+set hintchars=hjklasdfgyuiopqwertnmzxcvb
+noremap j 3j
+noremap k 3k
+map <TAB> :bn<CR>
+map <S-TAB> :bN<CR>
