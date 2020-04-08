@@ -36,7 +36,11 @@ set nowb
 
 "Color
 set background=dark
-set termguicolors
+if (has("termguicolors"))
+      "let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+      "let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+      set termguicolors
+  endif
 hi Folded ctermbg=10
 
 " use sytem clipboard
@@ -330,9 +334,6 @@ set statusline+=\ %{gutentags#statusline()}
 let g:airline_powerline_fonts = 0
 
 "MiniBufExpl
-"Save and go to next Buffer
-"nmap <TAB> :MBEbn<CR>
-"nmap <S-TAB> :MBEbp<CR>
 
 let g:miniBufExplCycleArround=1
 
