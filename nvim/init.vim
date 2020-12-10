@@ -190,10 +190,12 @@ Plug 'octol/vim-cpp-enhanced-highlight' "Better highlight for c++11/14/17
 Plug 'scrooloose/nerdtree' "File Explorer
 Plug 'fholgado/minibufexpl.vim' "Buffer List XXX Try to get rid of this
 
-Plug 'Shougo/vimproc.vim' , { 'do': 'make'}
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'} "Completion FrameWork
-Plug 'Shougo/neosnippet.vim' "Snippet FrameWork
-Plug 'Shougo/neosnippet-snippets' "Snippets
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'} "Lsp autocompletion
+"Plug 'Shougo/vimproc.vim' , { 'do': 'make'}
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'} "Completion FrameWork
+"Plug 'Shougo/neosnippet.vim' "Snippet FrameWork
+"Plug 'Shougo/neosnippet-snippets' "Snippets
 
 Plug 'jlesquembre/rst-tables.nvim', {'do': ':UpdateRemotePlugins'} "Create Tables
 
@@ -352,8 +354,14 @@ let g:floaterm_borderchars = ['─','│','─','│','╭','╮','╯','╰']
 hi link FloatermNF Floating
 hi link FloatermBorderNF Floating
 
-let g:hardtime_default_on = 1
+"let g:hardtime_default_on = 1
 let g:hardtime_showmsg = 1
 let g:hardtime_allow_different_key = 1
 
+
+"Coc
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
