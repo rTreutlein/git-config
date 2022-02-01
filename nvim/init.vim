@@ -173,6 +173,9 @@ Plug 'Twinside/vim-hoogle'
 
 Plug 'rTreutlein/haskell-vim'
 
+"svelte
+Plug 'leafOfTree/vim-svelte-plugin'
+
 "Tex
 Plug 'donRaphaco/neotex', { 'for': 'tex' }
 
@@ -365,3 +368,7 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
+"svelte
+let g:vim_svelte_plugin_use_typescript = 1
+
+packadd! matchit
