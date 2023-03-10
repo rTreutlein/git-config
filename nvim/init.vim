@@ -74,7 +74,7 @@ tmap <C-h> <C-\><C-n><C-w>h
 tmap <C-k> <C-\><C-n><C-w>k
 tmap <C-l> <C-\><C-n><C-w>l
 
-tnoremap <C-[> <C-\><C-n>
+tnoremap <C-n> <C-\><C-n>
 
 "Auto Enter insert Mode in Terminal
 :au BufWinEnter,BufEnter * if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif
@@ -235,9 +235,17 @@ Plug 'farmergreg/vim-lastplace'
 
 Plug 'lstephen/vim-hardtime'
 
+"LazyGit
+
+Plug 'kdheepak/lazygit.nvim'
+
 call plug#end()
 
 colorscheme NeoSolarized
+
+"LazyGit
+
+nnoremap <silent> <leader>gg :LazyGit<CR>
 
 "deopleate
 let g:deoplete#enable_at_startup = 1
@@ -268,14 +276,8 @@ let g:EasyMotion_smartcase = 1
 let g:EasyMotion_use_smartsign_us = 1
 
 "fugitive
-nnoremap <silent> <leader>gs :Gstatus<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gc :Gcommit<CR>
-nnoremap <silent> <leader>gb :Gblame<CR>
-nnoremap <silent> <leader>gl :Glog<CR>
+nnoremap <silent> <leader>gs :Git<CR>
 nnoremap <silent> <leader>gp :Git push<CR>
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>gr :Gremove<CR>
 
 "Easy align interactive
 vnoremap <silent> <Enter> :EasyAlign<cr>
