@@ -80,8 +80,8 @@ tnoremap <C-n> <C-\><C-n>
 :au BufWinEnter,BufEnter * if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif
 
 "Motion through AutoCompelte Popup
-inoremap <expr> <C-j> ((pumvisible())?("\<C-n>"):("j"))
-inoremap <expr> <C-k> ((pumvisible())?("\<C-p>"):("k"))
+imap <expr> <C-j> ((coc#pum#visible())?("\<C-n>"):("j"))
+imap <expr> <C-k> ((coc#pum#visible())?("\<C-p>"):("k"))
 
 "Replace Word with Copied/Delted
 nnoremap S diw"0P
