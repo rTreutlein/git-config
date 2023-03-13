@@ -74,14 +74,10 @@ tmap <C-h> <C-\><C-n><C-w>h
 tmap <C-k> <C-\><C-n><C-w>k
 tmap <C-l> <C-\><C-n><C-w>l
 
-tnoremap <C-n> <C-\><C-n>
+tnoremap <expr> <Esc> ((stridx(bufname(),"lazygit") > -1)?("\<Esc>"):("\<C-\>\<C-n>"))
 
 "Auto Enter insert Mode in Terminal
 :au BufWinEnter,BufEnter * if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif
-
-"Motion through AutoCompelte Popup
-imap <expr> <C-j> ((coc#pum#visible())?("\<C-n>"):("j"))
-imap <expr> <C-k> ((coc#pum#visible())?("\<C-p>"):("k"))
 
 "Replace Word with Copied/Delted
 nnoremap S diw"0P
@@ -140,8 +136,6 @@ nmap <leader>p iexport PS1=">"<CR>
 
 nnoremap <leader>j J
 
-"Close Buffer
-map <leader>q :MBEbd<CR>
 "Save
 map <leader>w :w<CR>
 
@@ -158,20 +152,12 @@ nmap <leader>! :silent exec 'r!' . getline(".")<CR>
 "Silent Make
 nmap <silent> <leader>m :silent make<CR>
 
+"Close Buffer
+map <leader>q :bd<CR>
+
 "Plugins
 
 call plug#begin('~/.config/nvim/plugged')
-
-"Haskell
-Plug 'eagletmt/neco-ghc'
-Plug 'eagletmt/ghcmod-vim'
-
-Plug 'merijn/haskellFoldIndent'
-
-Plug 'Twinside/vim-haskellFold'
-Plug 'Twinside/vim-hoogle'
-
-Plug 'rTreutlein/haskell-vim'
 
 "svelte
 Plug 'leafOfTree/vim-svelte-plugin'
@@ -180,80 +166,127 @@ Plug 'leafOfTree/vim-svelte-plugin'
 Plug 'donRaphaco/neotex', { 'for': 'tex' }
 
 "Git
-Plug 'airblade/vim-gitgutter' "Show Diffs and move to them
-Plug 'tpope/vim-fugitive' "Git Commands for Comminting/Pushing...
+Plug 'lewis6991/gitsigns.nvim'
+Plug 'kdheepak/lazygit.nvim'
 
-"CPP
-Plug 'octol/vim-cpp-enhanced-highlight' "Better highlight for c++11/14/17
+"Cmake
+Plug 'Shatur/neovim-tasks'
 
 "General
 
-"Plug 'vim-syntastic/syntastic' "Syntax Checker
-
 Plug 'scrooloose/nerdtree' "File Explorer
-Plug 'fholgado/minibufexpl.vim' "Buffer List XXX Try to get rid of this
+Plug 'akinsho/bufferline.nvim', { 'tag': 'v3.*'}
 
+Plug 'airblade/vim-rooter' "Auto Set Root Folder
+Plug 'voldikss/vim-floaterm'
+Plug 'psliwka/vim-smoothie' "Smooth Scroling with C-D C-F or PageUpDown
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'} "Lsp autocompletion
-"Plug 'Shougo/vimproc.vim' , { 'do': 'make'}
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'} "Completion FrameWork
-"Plug 'Shougo/neosnippet.vim' "Snippet FrameWork
-"Plug 'Shougo/neosnippet-snippets' "Snippets
+Plug 'nvim-lua/plenary.nvim' "Depency for other things
 
+"LSP
+Plug 'williamboman/mason.nvim' "Install LSP-Servers
+Plug 'williamboman/mason-lspconfig.nvim' "bridge gap
+Plug 'neovim/nvim-lspconfig' "Default Configs
+
+"Autocomplete
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'} "Fast Autocomplete
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'} "Snipets
+Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
+
+"Formatting
 Plug 'jlesquembre/rst-tables.nvim', {'do': ':UpdateRemotePlugins'} "Create Tables
-
 Plug 'ntpeters/vim-better-whitespace' "Show trailing whitespace and remvoe
-
-Plug 'ludovicchabant/vim-gutentags' "Automatically update ctags files
-
-Plug 'easymotion/vim-easymotion' "Show possible Search Targets to Jump to
-
-Plug 'Raimondi/delimitMate' "Add closing quotes/brakets/...
-
-Plug 'iCyMind/NeoSolarized' "Color Scheme
-
-Plug 'dpc/vim-smarttabs' "Tabs for indenting , Spaces for Alignmnet
-
 Plug 'junegunn/vim-easy-align' "Align Text simply
+
+"Finding Stuff
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } "fzf program
 Plug 'junegunn/fzf.vim' "fzf plugin
 
-Plug 'airblade/vim-rooter' "Auto Set Root Folder
-
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-Plug 'voldikss/vim-floaterm'
-
-Plug 'psliwka/vim-smoothie'
-
-"From https://github.com/Blacksuan19/init.nvim/blob/master/init.vim
+"Visual
 Plug 'ryanoasis/vim-devicons'
-Plug 'farmergreg/vim-lastplace' 
+Plug 'iCyMind/NeoSolarized' "Color Scheme
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-"VimSpector
+"Movement
+Plug 'farmergreg/vim-lastplace' "Open File at last edit location
+Plug 'easymotion/vim-easymotion' "Show possible Search Targets to Jump to
 
-Plug 'lstephen/vim-hardtime'
-
-"LazyGit
-
-Plug 'kdheepak/lazygit.nvim'
 
 call plug#end()
 
 colorscheme NeoSolarized
 
+let g:coq_settings = {"auto_start": "shut-up","keymap":{"jump_to_mark": "<c-n>", "recommended": v:false}}
+
+ino <silent><expr> <Esc>   pumvisible() ? "\<C-e><Esc>" : "\<Esc>"
+ino <silent><expr> <C-c>   pumvisible() ? "\<C-e><C-c>" : "\<C-c>"
+ino <silent><expr> <BS>    pumvisible() ? "\<C-e><BS>"  : "\<BS>"
+ino <silent><expr> <CR>    pumvisible() ? (complete_info().selected == -1 ? "\<C-e><CR>" : "\<C-y>") : "\<CR>"
+ino <silent><expr> <C-j>   pumvisible() ? "\<C-n>" : "\<C-j>"
+ino <silent><expr> <C-k>   pumvisible() ? "\<C-p>" : "\<C-k>"
+
+"bufferline
+"lspconifg
+lua << EOF
+require("bufferline").setup{}
+
+require("nvim-treesitter.configs").setup{
+    ensure_installed = {"c","cpp","lua","vim","help","python","yaml"},
+    highlight = {
+        enable = true
+    },
+    indent = {enable = true},
+}
+
+
+local Path = require('plenary.path')
+require('tasks').setup{
+    default_params = {
+        cmake = {
+            build_dir = "Build/Intermediate/Shore300_Linux_x64_gcc9_ModelTrainer"
+        }
+    }
+}
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+local on_attach = function(client, bufnr)
+    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    vim.api.nvim_buf_set_option(0, "formatexpr", "v:lua.vim.lsp.formatexpr()")
+
+    local bufopts = { noremap = true, silent = true, buffer=bufnr }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+end
+
+require("lspconfig").lua_ls.setup{
+    on_attach = on_attach
+}
+require("lspconfig").vimls.setup{
+    on_attach = on_attach
+}
+require("lspconfig").clangd.setup{
+    on_attach = on_attach,
+    cmd = {
+        "clangd",
+        "--background-index",
+        }
+}
+require("lspconfig").pyright.setup{
+    on_attach = on_attach
+}
+require("lspconfig").hls.setup{
+    on_attach = on_attach
+}
+EOF
+
+nmap <leader>ss :ClangdSwitchSourceHeader<CR>
+
 "LazyGit
-
 nnoremap <silent> <leader>gg :LazyGit<CR>
-
-"deopleate
-let g:deoplete#enable_at_startup = 1
-
-"NeoSnippet
-imap <C-l> <Plug>(neosnippet_expand_or_jump)
-smap <C-l> <Plug>(neosnippet_expand_or_jump)
-xmap <C-l> <Plug>(neosnippet_expand_target)
 
 "easymotion
 nmap s <Plug>(easymotion-s2)
@@ -316,40 +349,17 @@ endfunction
 nmap <leader>o :FZF<cr>
 nmap <leader>f :Rg<cr>
 nmap <leader>b :Buffers<cr>
-nmap <leader>r :call Fzf_dev()<cr>
 
 "Table creating update
 nmap <leader>tc :TableRstFormat<CR>
 nmap <leader>tt :TableRstReflow<CR>
 
-"Gutentags
-set statusline+=\ %{gutentags#statusline()}
-
-"Syntastic
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-"
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"
-"let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
-
-"Airline
-let g:airline_powerline_fonts = 0
-
-"MiniBufExpl
-
-let g:miniBufExplCycleArround=1
-
 "Floaterm
 nmap <leader>tt :FloatermToggle<CR>
 nmap <leader>tn :FloatermNew<CR>
 
-nmap <expr> <TAB> (&buftype == 'terminal' ? ':FloatermNext' : ':MBEbn')."\<CR>"
-nmap <expr> <S-TAB> (&buftype == 'terminal' ? ':FloatermPrev' : ':MBEbp')."\<CR>"
+nmap <expr> <TAB> (&buftype == 'terminal' ? ':FloatermNext' : ':bnext')."\<CR>"
+nmap <expr> <S-TAB> (&buftype == 'terminal' ? ':FloatermPrev' : ':bprevious')."\<CR>"
 
 let g:floaterm_position = 'center'
 let g:floaterm_width = 0.9
@@ -359,18 +369,5 @@ let g:floaterm_borderchars = ['─','│','─','│','╭','╮','╯','╰']
 hi link FloatermNF Floating
 hi link FloatermBorderNF Floating
 
-"let g:hardtime_default_on = 1
-let g:hardtime_showmsg = 1
-let g:hardtime_allow_different_key = 1
-
-
-"Coc
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
 "svelte
 let g:vim_svelte_plugin_use_typescript = 1
-
-packadd! matchit
