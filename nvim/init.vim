@@ -79,9 +79,6 @@ tnoremap <expr> <Esc> ((stridx(bufname(),"lazygit") > -1)?("\<Esc>"):("\<C-\>\<C
 "Auto Enter insert Mode in Terminal
 :au BufWinEnter,BufEnter * if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif
 
-"Replace Word with Copied/Delted
-nnoremap S diw"0P
-
 "Copie till end of line
 map Y y$
 
@@ -106,26 +103,6 @@ if &diff || exists("g:git")
 else
     autocmd VimEnter * NERDTree
     autocmd VimEnter * wincmd l
-    "if exists("g:Vertical")
-    "    autocmd VimEnter * :split
-    "    autocmd VimEnter * wincmd j
-    "    autocmd VimEnter * :terminal
-    "    autocmd VimEnter * call feedkeys("\<Esc>")
-    "    autocmd VimEnter * :set nobuflisted
-    "    autocmd VimEnter * wincmd k
-    "    autocmd VimEnter * :vertical resize 90
-    "    autocmd VimEnter * call feedkeys("\<Esc>")
-    "else
-    "    autocmd VimEnter * :vs
-    "    autocmd VimEnter * wincmd l
-    "    autocmd VimEnter * :terminal
-    "    autocmd VimEnter * call feedkeys("\<Esc>")
-    "    autocmd VimEnter * :set nobuflisted
-    "    autocmd VimEnter * :vertical resize 80
-    "    autocmd VimEnter * wincmd h
-    "    autocmd VimEnter * :vertical resize 90
-    "    autocmd VimEnter * call feedkeys("\<Esc>")
-    "endif
 endif
 
 "Set Leader to Space
@@ -148,12 +125,6 @@ nnoremap <Leader>- :exe "vertical resize " . (winwidth(0) * 9/10)<CR>
 
 "shell exec current line
 nmap <leader>! :silent exec 'r!' . getline(".")<CR>
-
-"Silent Make
-nmap <silent> <leader>m :silent make<CR>
-
-"Close Buffer
-map <leader>q :bd<CR>
 
 "Plugins
 
@@ -183,10 +154,15 @@ Plug 'psliwka/vim-smoothie' "Smooth Scroling with C-D C-F or PageUpDown
 
 Plug 'nvim-lua/plenary.nvim' "Depency for other things
 
+Plug 'andymass/vim-matchup' "Treesitter powered %
+
+Plug 'tpope/vim-sleuth' "Autodetect shiftwidht and expandtab
+
 "LSP
 Plug 'williamboman/mason.nvim' "Install LSP-Servers
 Plug 'williamboman/mason-lspconfig.nvim' "bridge gap
 Plug 'neovim/nvim-lspconfig' "Default Configs
+Plug 'weilbith/nvim-code-action-menu'
 
 "Autocomplete
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'} "Fast Autocomplete
@@ -210,7 +186,9 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 "Movement
 Plug 'farmergreg/vim-lastplace' "Open File at last edit location
 Plug 'easymotion/vim-easymotion' "Show possible Search Targets to Jump to
+Plug 'ggandor/leap.nvim' "Nvims answer to the mouse
 
+Plug 'numToStr/Comment.nvim' "Toggle comments
 
 call plug#end()
 
@@ -220,22 +198,43 @@ let g:coq_settings = {"auto_start": "shut-up","keymap":{"jump_to_mark": "<c-n>",
 
 ino <silent><expr> <Esc>   pumvisible() ? "\<C-e><Esc>" : "\<Esc>"
 ino <silent><expr> <C-c>   pumvisible() ? "\<C-e><C-c>" : "\<C-c>"
+"overide to work with autpairs
 ino <silent><expr> <BS>    pumvisible() ? "\<C-e><BS>"  : "\<BS>"
 ino <silent><expr> <CR>    pumvisible() ? (complete_info().selected == -1 ? "\<C-e><CR>" : "\<C-y>") : "\<CR>"
 ino <silent><expr> <C-j>   pumvisible() ? "\<C-n>" : "\<C-j>"
 ino <silent><expr> <C-k>   pumvisible() ? "\<C-p>" : "\<C-k>"
 
-"bufferline
-"lspconifg
 lua << EOF
-require("bufferline").setup{}
+
+require('leap').add_default_mappings()
+
+require('Comment').setup()
+
+local dia_ind = function(count, level, dict, context)
+  local s = " "
+  for e, n in pairs(dict) do
+    local sym = e == "error" and " "
+        or (e == "warning" and " " or "" )
+    s = s .. n .. sym
+  end
+  return s
+end
+
+require("bufferline").setup{
+    options = {
+        diagnostics = "nvim_lsp",
+        diagnostics_indicator = dia_ind,
+        tab_size = 20,
+    }
+}
 
 require("nvim-treesitter.configs").setup{
-    ensure_installed = {"c","cpp","lua","vim","help","python","yaml"},
+    ensure_installed = {"c","cpp","lua","vim","help","python","yaml","html"},
     highlight = {
         enable = true
     },
     indent = {enable = true},
+    matchup = {enabled = true},
 }
 
 
@@ -243,7 +242,10 @@ local Path = require('plenary.path')
 require('tasks').setup{
     default_params = {
         cmake = {
-            build_dir = "Build/Intermediate/Shore300_Linux_x64_gcc9_ModelTrainer"
+            build_dir = "Build/Intermediate/Shore300_Linux_x64_gcc9_ModelTrainer",
+            args = {
+                build = { "-j8" },
+            },
         }
     }
 }
@@ -259,29 +261,76 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    --vim.keymap.set('n', 'gi', vim.lsp.buf.implemmentation, bufopts)
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<leader>a', ':CodeActionMenu<CR>', bufopts)
 end
 
-require("lspconfig").lua_ls.setup{
+local lspconfig = require('lspconfig')
+
+local servers = { 'clangd', 'pyright', 'vimls' , 'cmake' , 'tsserver' , 'html' }
+for _, lsp in ipairs(servers) do
+    lspconfig[lsp].setup(require('coq').lsp_ensure_capabilities({
     on_attach = on_attach
-}
-require("lspconfig").vimls.setup{
-    on_attach = on_attach
-}
-require("lspconfig").clangd.setup{
+    }))
+end
+lspconfig['lua_ls'].setup(require('coq').lsp_ensure_capabilities({
     on_attach = on_attach,
-    cmd = {
-        "clangd",
-        "--background-index",
+    settings = {
+        Lua = {
+            runtime = {
+                version = 'Lua 5.1',
+            },
+            diagnostics = {
+                globals = {'vim'},
+            },
+            telemetry = {
+                enable = false,
+            }
         }
-}
-require("lspconfig").pyright.setup{
-    on_attach = on_attach
-}
-require("lspconfig").hls.setup{
-    on_attach = on_attach
-}
+    }
+}))
+
+local api = vim.api
+
+local function nvim_loaded_buffers()
+  local result = {}
+  local buffers = api.nvim_list_bufs()
+  for _, buf in ipairs(buffers) do
+      if api.nvim_buf_is_loaded(buf) then
+         table.insert(result, buf)
+      end
+   end
+   return result
+end
+
+function buf_kill(target_buf, should_force)
+    if not should_force and vim.bo.modified then
+        return api.nvim_err_writeln('Buffer is modified. Force required.')
+    end
+    local command = 'bd'
+    if should_force then command = command..'!' end
+    if target_buf == 0 or target_buf == nil then
+        target_buf = api.nvim_get_current_buf()
+    end
+    local buffers = nvim_loaded_buffers()
+    if #buffers == 1 then
+        api.nvim_command(command)
+        return
+    end
+    local nextbuf
+    for i, buf in ipairs(buffers) do
+        if buf == target_buf then
+            nextbuf = buffers[(i - 1 + 1) % #buffers + 1]
+            break
+        end
+    end
+    api.nvim_set_current_buf(nextbuf)
+    api.nvim_command(table.concat({command, target_buf}, ' '))
+end
 EOF
+
+nnoremap <leader>q <Cmd>lua buf_kill(0)<CR>
 
 nmap <leader>ss :ClangdSwitchSourceHeader<CR>
 
@@ -289,8 +338,8 @@ nmap <leader>ss :ClangdSwitchSourceHeader<CR>
 nnoremap <silent> <leader>gg :LazyGit<CR>
 
 "easymotion
-nmap s <Plug>(easymotion-s2)
-nmap t <Plug>(easymotion-t2)
+"nmap s <Plug>(easymotion-s2)
+"nmap t <Plug>(easymotion-t2)
 
 map  / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
@@ -371,3 +420,6 @@ hi link FloatermBorderNF Floating
 
 "svelte
 let g:vim_svelte_plugin_use_typescript = 1
+
+"Tasks
+nmap <leader>m :Task start cmake build<CR>
