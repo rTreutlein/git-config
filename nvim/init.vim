@@ -19,10 +19,6 @@ set mouse=a
 
 set backspace=indent,eol,start
 
-"Show Syntax and load filetype specific config
-filetype plugin indent on
-syntax enable
-
 "Show Line Numbers
 set number
 set relativenumber
@@ -46,9 +42,6 @@ hi Folded ctermbg=10
 " use sytem clipboard
 set clipboard=unnamedplus
 
-"Enable typing during Omni Complete
-set completeopt=longest,menuone
-
 "Easier movment in File
 map J }
 map K {
@@ -68,11 +61,6 @@ map <leader>j <C-j>
 map <leader>h <C-h>
 map <leader>k <C-k>
 map <leader>l <C-l>
-"Movement in Terminal
-tmap <C-j> <C-\><C-n><C-w>j
-tmap <C-h> <C-\><C-n><C-w>h
-tmap <C-k> <C-\><C-n><C-w>k
-tmap <C-l> <C-\><C-n><C-w>l
 
 tnoremap <expr> <Esc> ((stridx(bufname(),"lazygit") > -1)?("\<Esc>"):("\<C-\>\<C-n>"))
 
@@ -98,13 +86,6 @@ set laststatus=2
 set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 set statusline+=:%c
 
-" On Startup configre windows correctly
-if &diff || exists("g:git")
-else
-    autocmd VimEnter * NERDTree
-    autocmd VimEnter * wincmd l
-endif
-
 "Set Leader to Space
 let mapleader = "\<Space>"
 
@@ -126,76 +107,6 @@ nnoremap <Leader>- :exe "vertical resize " . (winwidth(0) * 9/10)<CR>
 "shell exec current line
 nmap <leader>! :silent exec 'r!' . getline(".")<CR>
 
-"Plugins
-
-call plug#begin('~/.config/nvim/plugged')
-
-"svelte
-Plug 'leafOfTree/vim-svelte-plugin'
-
-"Tex
-Plug 'donRaphaco/neotex', { 'for': 'tex' }
-
-"Git
-Plug 'lewis6991/gitsigns.nvim'
-Plug 'kdheepak/lazygit.nvim'
-
-"Cmake
-Plug 'Shatur/neovim-tasks'
-
-"General
-
-Plug 'scrooloose/nerdtree' "File Explorer
-Plug 'akinsho/bufferline.nvim', { 'tag': 'v3.*'}
-
-Plug 'airblade/vim-rooter' "Auto Set Root Folder
-Plug 'voldikss/vim-floaterm'
-Plug 'psliwka/vim-smoothie' "Smooth Scroling with C-D C-F or PageUpDown
-
-Plug 'nvim-lua/plenary.nvim' "Depency for other things
-
-Plug 'andymass/vim-matchup' "Treesitter powered %
-
-Plug 'tpope/vim-sleuth' "Autodetect shiftwidht and expandtab
-
-"LSP
-Plug 'williamboman/mason.nvim' "Install LSP-Servers
-Plug 'williamboman/mason-lspconfig.nvim' "bridge gap
-Plug 'neovim/nvim-lspconfig' "Default Configs
-Plug 'weilbith/nvim-code-action-menu'
-
-"Autocomplete
-Plug 'ms-jpq/coq_nvim', {'branch': 'coq'} "Fast Autocomplete
-Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'} "Snipets
-Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
-
-"Formatting
-Plug 'jlesquembre/rst-tables.nvim', {'do': ':UpdateRemotePlugins'} "Create Tables
-Plug 'ntpeters/vim-better-whitespace' "Show trailing whitespace and remvoe
-Plug 'junegunn/vim-easy-align' "Align Text simply
-
-"Finding Stuff
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } "fzf program
-Plug 'junegunn/fzf.vim' "fzf plugin
-
-"Visual
-Plug 'ryanoasis/vim-devicons'
-Plug 'iCyMind/NeoSolarized' "Color Scheme
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
-"Movement
-Plug 'farmergreg/vim-lastplace' "Open File at last edit location
-Plug 'easymotion/vim-easymotion' "Show possible Search Targets to Jump to
-Plug 'ggandor/leap.nvim' "Nvims answer to the mouse
-
-Plug 'numToStr/Comment.nvim' "Toggle comments
-
-call plug#end()
-
-colorscheme NeoSolarized
-
-let g:coq_settings = {"auto_start": "shut-up","keymap":{"jump_to_mark": "<c-n>", "recommended": v:false}}
-
 ino <silent><expr> <Esc>   pumvisible() ? "\<C-e><Esc>" : "\<Esc>"
 ino <silent><expr> <C-c>   pumvisible() ? "\<C-e><C-c>" : "\<C-c>"
 "overide to work with autpairs
@@ -206,30 +117,29 @@ ino <silent><expr> <C-k>   pumvisible() ? "\<C-p>" : "\<C-k>"
 
 lua << EOF
 
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require('lazy').setup('plugins')
+
+require('config')
+
 require('leap').add_default_mappings()
 
 require('Comment').setup()
 
-local dia_ind = function(count, level, dict, context)
-  local s = " "
-  for e, n in pairs(dict) do
-    local sym = e == "error" and " "
-        or (e == "warning" and " " or "" )
-    s = s .. n .. sym
-  end
-  return s
-end
-
-require("bufferline").setup{
-    options = {
-        diagnostics = "nvim_lsp",
-        diagnostics_indicator = dia_ind,
-        tab_size = 20,
-    }
-}
-
 require("nvim-treesitter.configs").setup{
-    ensure_installed = {"c","cpp","lua","vim","help","python","yaml","html"},
+    ensure_installed = {"c","cpp","lua","vim","vimdoc","python","yaml","html"},
     highlight = {
         enable = true
     },
@@ -250,89 +160,9 @@ require('tasks').setup{
     }
 }
 
-require("mason").setup()
-require("mason-lspconfig").setup()
-
-local on_attach = function(client, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-    vim.api.nvim_buf_set_option(0, "formatexpr", "v:lua.vim.lsp.formatexpr()")
-
-    local bufopts = { noremap = true, silent = true, buffer=bufnr }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    --vim.keymap.set('n', 'gi', vim.lsp.buf.implemmentation, bufopts)
-    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<leader>a', ':CodeActionMenu<CR>', bufopts)
-end
-
-local lspconfig = require('lspconfig')
-
-local servers = { 'clangd', 'pyright', 'vimls' , 'cmake' , 'tsserver' , 'html' }
-for _, lsp in ipairs(servers) do
-    lspconfig[lsp].setup(require('coq').lsp_ensure_capabilities({
-    on_attach = on_attach
-    }))
-end
-lspconfig['lua_ls'].setup(require('coq').lsp_ensure_capabilities({
-    on_attach = on_attach,
-    settings = {
-        Lua = {
-            runtime = {
-                version = 'Lua 5.1',
-            },
-            diagnostics = {
-                globals = {'vim'},
-            },
-            telemetry = {
-                enable = false,
-            }
-        }
-    }
-}))
-
-local api = vim.api
-
-local function nvim_loaded_buffers()
-  local result = {}
-  local buffers = api.nvim_list_bufs()
-  for _, buf in ipairs(buffers) do
-      if api.nvim_buf_is_loaded(buf) then
-         table.insert(result, buf)
-      end
-   end
-   return result
-end
-
-function buf_kill(target_buf, should_force)
-    if not should_force and vim.bo.modified then
-        return api.nvim_err_writeln('Buffer is modified. Force required.')
-    end
-    local command = 'bd'
-    if should_force then command = command..'!' end
-    if target_buf == 0 or target_buf == nil then
-        target_buf = api.nvim_get_current_buf()
-    end
-    local buffers = nvim_loaded_buffers()
-    if #buffers == 1 then
-        api.nvim_command(command)
-        return
-    end
-    local nextbuf
-    for i, buf in ipairs(buffers) do
-        if buf == target_buf then
-            nextbuf = buffers[(i - 1 + 1) % #buffers + 1]
-            break
-        end
-    end
-    api.nvim_set_current_buf(nextbuf)
-    api.nvim_command(table.concat({command, target_buf}, ' '))
-end
 EOF
 
-nnoremap <leader>q <Cmd>lua buf_kill(0)<CR>
-
-nmap <leader>ss :ClangdSwitchSourceHeader<CR>
+colorscheme NeoSolarized
 
 "LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
@@ -357,47 +187,11 @@ let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
 let g:EasyMotion_smartcase = 1
 let g:EasyMotion_use_smartsign_us = 1
 
-"fugitive
-nnoremap <silent> <leader>gs :Git<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
-
 "Easy align interactive
 vnoremap <silent> <Enter> :EasyAlign<cr>
 
 "Better Whitespacs
 map <leader>sw :StripWhitespace<CR>
-
-"FZF fuzzy finder
-let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
-let $FZF_DEFAULT_OPTS="--reverse" "top to bottom
-
-" floating fzf window with borders
-function! CreateCenteredFloatingWindow()
-    let width = min([&columns - 4, max([80, &columns - 20])])
-    let height = min([&lines - 4, max([20, &lines - 10])])
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
-
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    au BufWipeout <buffer> exe 'bw '.s:buf
-endfunction
-
-nmap <leader>o :FZF<cr>
-nmap <leader>f :Rg<cr>
-nmap <leader>b :Buffers<cr>
 
 "Table creating update
 nmap <leader>tc :TableRstFormat<CR>
