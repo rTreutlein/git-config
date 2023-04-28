@@ -9,6 +9,6 @@ ln -s "$DIR/nvim/init.vim" ~/.config/nvim/init.vim
 echo "Linking vim lua folder"
 ln -s "$DIR/nvim/lua" ~/.config/nvim/lua
 echo "Linking vim after folder"
-ln -s "$DIR/nvim/lua" ~/.config/nvim/after
+ln -s "$DIR/nvim/after" ~/.config/nvim/after
 echo "Linking Tmux Config"
 ln -s "$DIR/tmux.conf" ~/.tmux.conf

@@ -23,3 +23,16 @@ lsp.setup()
 
 vim.keymap.set('n','<leader>ss', ':ClangdSwitchSourceHeader<CR>')
 
+local cmp = require('cmp')
+
+cmp.setup({
+  mapping = {
+    -- `Enter` key to confirm completion
+    ['<CR>'] = cmp.mapping.confirm({select = true}),
+
+    -- Ctrl+Space to trigger completion menu
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-j>'] = cmp.mapping.select_next_item(),
+    ['<C-k>'] = cmp.mapping.select_prev_item(),
+  }
+})

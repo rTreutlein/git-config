@@ -52,6 +52,7 @@ inoremap <C-j> j
 map <silent> j gj
 map <silent> k gk
 
+
 "Move easly between windows
 map <C-j> <C-w>j
 map <C-h> <C-w>h
@@ -106,14 +107,6 @@ nnoremap <Leader>- :exe "vertical resize " . (winwidth(0) * 9/10)<CR>
 
 "shell exec current line
 nmap <leader>! :silent exec 'r!' . getline(".")<CR>
-
-ino <silent><expr> <Esc>   pumvisible() ? "\<C-e><Esc>" : "\<Esc>"
-ino <silent><expr> <C-c>   pumvisible() ? "\<C-e><C-c>" : "\<C-c>"
-"overide to work with autpairs
-ino <silent><expr> <BS>    pumvisible() ? "\<C-e><BS>"  : "\<BS>"
-ino <silent><expr> <CR>    pumvisible() ? (complete_info().selected == -1 ? "\<C-e><CR>" : "\<C-y>") : "\<CR>"
-ino <silent><expr> <C-j>   pumvisible() ? "\<C-n>" : "\<C-j>"
-ino <silent><expr> <C-k>   pumvisible() ? "\<C-p>" : "\<C-k>"
 
 lua << EOF
 
