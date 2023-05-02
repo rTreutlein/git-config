@@ -1,9 +1,16 @@
 return {
-  'deifyed/naVi',
+  --'deifyed/naVi',
+  dir = "/home/roman/Code/naVi",
+  lazy = false,
   dependencies = {
     {
-      "jcdickinson/http.nvim", build = "cargo build --workspace --release",
+      'nvim-lua/plenary.nvim',
+      "travonted/luajob",
+      'rcarriga/nvim-notify',
     },
+  },
+  opts = {
+    debug = true,
   },
   keys = {
     { "<leader>c", "<cmd>lua require('navi').open()<cr>", mode = "n", desc = "NaVI prompt" },

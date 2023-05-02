@@ -10,8 +10,7 @@ end
 
 return {
     'akinsho/bufferline.nvim',
-    branch = 'v3.0.0',
-    config = {
+    opts = {
         options = {
             diagnostics = "nvim_lsp",
             diagnostics_indicator = dia_ind,

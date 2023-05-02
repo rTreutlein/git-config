@@ -1,10 +1,6 @@
 return {
-
-    --svelte
-    'leafOfTree/vim-svelte-plugin',
-
-    --Tex
-    'donRaphaco/neotex',
+    --Depency for other things
+    'nvim-lua/plenary.nvim',
 
     --Git
     'lewis6991/gitsigns.nvim',
@@ -14,8 +10,6 @@ return {
     'Shatur/neovim-tasks',
 
     --General
-    'airblade/vim-rooter', --Auto Set Root Folder
-    'voldikss/vim-floaterm',
     'psliwka/vim-smoothie', --Smooth Scroling with C-D C-F or PageUpDown
 
     'andymass/vim-matchup', --Treesitter powered %
@@ -43,12 +37,4 @@ return {
 
     'nvim-tree/nvim-web-devicons',
 
-    'nvim-lua/plenary.nvim', --Depency for other things
-
-    'mbbill/undotree',
-
-    {
-        'ibhagwan/fzf-lua',
-        dependencies = { 'junegunn/fzf', build = './install --bin', }
-    },
 }

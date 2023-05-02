@@ -140,8 +140,6 @@ require("nvim-treesitter.configs").setup{
     matchup = {enabled = true},
 }
 
-
-local Path = require('plenary.path')
 require('tasks').setup{
     default_params = {
         cmake = {
@@ -153,7 +151,11 @@ require('tasks').setup{
     }
 }
 
+print("TEst")
+
 EOF
+
+set cmdheight=5
 
 colorscheme NeoSolarized
 
@@ -186,14 +188,7 @@ vnoremap <silent> <Enter> :EasyAlign<cr>
 "Better Whitespacs
 map <leader>sw :StripWhitespace<CR>
 
-"Table creating update
-nmap <leader>tc :TableRstFormat<CR>
-nmap <leader>tt :TableRstReflow<CR>
-
 "Floaterm
-nmap <leader>tt :FloatermToggle<CR>
-nmap <leader>tn :FloatermNew<CR>
-
 nmap <expr> <TAB> (&buftype == 'terminal' ? ':FloatermNext' : ':bnext')."\<CR>"
 nmap <expr> <S-TAB> (&buftype == 'terminal' ? ':FloatermPrev' : ':bprevious')."\<CR>"
 
@@ -204,9 +199,6 @@ let g:floaterm_height = 0.9
 let g:floaterm_borderchars = ['─','│','─','│','╭','╮','╯','╰']
 hi link FloatermNF Floating
 hi link FloatermBorderNF Floating
-
-"svelte
-let g:vim_svelte_plugin_use_typescript = 1
 
 "Tasks
 nmap <leader>m :Task start cmake build<CR>
