@@ -3,6 +3,10 @@ require("config.remap")
 
 local api = vim.api
 
+api.nvim_create_autocmd({"BufNewFile","BufRead"},{pattern = {"*.cxxtest"}, command = "set syntax=cpp"})
+
+api.nvim_create_autocmd({"BufWinEnter","BufEnter"}, {command = "if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif"})
+
 local function nvim_loaded_buffers()
   local result = {}
   local buffers = api.nvim_list_bufs()

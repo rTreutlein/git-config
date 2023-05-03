@@ -1,11 +1,8 @@
 return {
   --'deifyed/naVi',
   dir = "/home/roman/Code/naVi",
-  lazy = false,
   dependencies = {
     {
-      'nvim-lua/plenary.nvim',
-      "travonted/luajob",
       'rcarriga/nvim-notify',
     },
   },

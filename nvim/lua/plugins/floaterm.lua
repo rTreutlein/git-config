@@ -1,7 +1,8 @@
 return {
-    'voldikss/vim-floaterm',
+    'numToStr/FTerm.nvim',
     keys = {
-        {"<leader>tt", ":FloatermToggle<CR>"},
-        {"<leader>tn", ":FloatermNew<CR>"},
+        {"<A-t>", '<CMD>lua require("FTerm").toggle()<CR>', mode = 'n'},
+        {"<A-t>", '<C-\\><C-n><CMD>lua require("FTerm").toggle()<CR>', mode = 't'},
+        {"<leader>gg"},
     },
 }
