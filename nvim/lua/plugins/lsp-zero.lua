@@ -48,7 +48,9 @@ return {
             {'williamboman/mason-lspconfig.nvim'},
             {
                 'williamboman/mason.nvim',
-                build = ":MasonUpdate",
+                build = function ()
+                    pcall(vim.cmd, 'MasonUpdate')
+                end,
             },
             {
                 'weilbith/nvim-code-action-menu',
