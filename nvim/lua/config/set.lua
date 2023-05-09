@@ -15,7 +15,12 @@ vim.opt.linebreak = true
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undofile = true
-vim.opt.undodir = os.getenv("HOME") .. "/.local/state/nvim/undodir"
+local home = os.getenv("HOME")
+if home then
+    vim.opt.undodir = home .. "/.local/state/nvim/undodir"
+else
+    vim.opt.undodir = "C:\\Users\\ttn\\AppData\\Local\\nvim-data"
+end
 
 vim.opt.hlsearch = false
 
