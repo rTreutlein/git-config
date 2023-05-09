@@ -15,6 +15,7 @@ return {
         dependencies = {
             {'hrsh7th/cmp-buffer'},
             {'hrsh7th/cmp-path'},
+            {'hrsh7th/cmp-nvim-lsp'},
             {'saadparwaiz1/cmp_luasnip'},
             {'L3MON4D3/LuaSnip'},
         },
@@ -32,6 +33,7 @@ return {
                 completion = { completeopt = 'menu,menuone,preview' },
                 mapping = {
                     -- `Enter` key to confirm completion
+                    ['<C-Space>'] = cmp.mapping.complete(),
                     ['<CR>'] = cmp.mapping.confirm({select = true}),
                     --['<C-j>'] = cmp.mapping.select_next_item(),
                     --['<C-k>'] = cmp.mapping.select_prev_item(),
@@ -44,8 +46,8 @@ return {
         cmd = 'LspInfo',
         event = {'BufReadPre', 'BufNewFile'},
         dependencies = {
-            {'hrsh7th/cmp-nvim-lsp'},
             {'williamboman/mason-lspconfig.nvim'},
+            {'folke/neodev.nvim'},
             {
                 'williamboman/mason.nvim',
                 build = function ()
@@ -56,9 +58,12 @@ return {
                 'weilbith/nvim-code-action-menu',
                 cmd = 'CodeActionMenu',
             }
+
         },
         config = function ()
             local lsp = require'lsp-zero'
+
+            require'neodev'.setup()
 
             lsp.ensure_installed({
                 'clangd', 'cmake', 'lua_ls', 'vimls',
