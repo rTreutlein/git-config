@@ -8,6 +8,7 @@ return {
                 find_files = {
                     follow = true,
                     hidden = true,
+                    no_ignore = true,
                 }
             }
         },
