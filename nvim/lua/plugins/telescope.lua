@@ -2,7 +2,7 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         --cmd = "Telescope",
-        --enabled = false,
+        enabled = false,
         opts = {
             pickers = {
                 find_files = {
