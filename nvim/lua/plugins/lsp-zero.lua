@@ -54,10 +54,6 @@ return {
                     pcall(vim.cmd, 'MasonUpdate')
                 end,
             },
-            {
-                'weilbith/nvim-code-action-menu',
-                cmd = 'CodeActionMenu',
-            }
 
         },
         config = function ()
@@ -67,12 +63,14 @@ return {
 
             lsp.ensure_installed({
                 'clangd', 'cmake', 'lua_ls', 'vimls',
-                'html', 'pyright', 'tsserver',
+                'html', 'pyright', 'tsserver', 'hls'
             })
 
             lsp.on_attach(function(_, bufnr)
                 lsp.default_keymaps({buffer = bufnr})
-                vim.keymap.set('n', '<leader>a', ':CodeActionMenu<CR>', {buffer = true})
+                vim.keymap.set('n', '<leader>a', function ()
+                    require('fzf-lua').lsp_code_actions{}
+                end, {buffer = true})
                 vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, {buffer = true})
             end)
 
