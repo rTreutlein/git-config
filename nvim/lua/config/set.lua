@@ -37,3 +37,5 @@ vim.opt.colorcolumn = "80"
 vim.opt.autoread = true
 
 vim.opt.clipboard="unnamedplus"
+
+vim.opt.splitright = true
