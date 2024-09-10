@@ -29,14 +29,15 @@ return {
             --local cmp_action = lsp.cmp_action()
 
             cmp.setup({
-                preselect = 'item',
-                completion = { completeopt = 'menu,menuone,preview' },
+                preselect =  cmp.PreselectMode.None,
+
+                completion = { completeopt = 'menu,menuone,popup,noinsert,noselect' },
                 mapping = {
                     -- `Enter` key to confirm completion
                     ['<C-Space>'] = cmp.mapping.complete(),
-                    ['<CR>'] = cmp.mapping.confirm({select = true}),
-                    --['<C-j>'] = cmp.mapping.select_next_item(),
-                    --['<C-k>'] = cmp.mapping.select_prev_item(),
+                    ['<Tab>'] = cmp.mapping.confirm(),
+                    ['<C-j>'] = cmp.mapping.select_next_item(),
+                    ['<C-k>'] = cmp.mapping.select_prev_item(),
                 }
             })
         end
@@ -68,7 +69,11 @@ return {
 
             lsp.on_attach(function(_, bufnr)
                 lsp.default_keymaps({buffer = bufnr})
+                print("Attached")
                 vim.keymap.set('n', '<leader>a', function ()
+                    require('fzf-lua').lsp_code_actions{}
+                end, {buffer = true})
+                vim.keymap.set('v', '<leader>a', function ()
                     require('fzf-lua').lsp_code_actions{}
                 end, {buffer = true})
                 vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, {buffer = true})
