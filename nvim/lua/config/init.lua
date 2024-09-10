@@ -44,3 +44,7 @@ function buf_kill(target_buf, should_force)
 end
 
 vim.keymap.set('n', '<leader>q', function() buf_kill(0) end)
+
+vim.filetype.add({extension = {metta = "metta"}})
+
+
