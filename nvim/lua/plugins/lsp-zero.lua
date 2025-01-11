@@ -1,13 +1,5 @@
 
 return {
-    {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v2.x',
-        lazy = true,
-        config = function ()
-            require'lsp-zero.settings'.preset({})
-        end
-    },
     --Autocompletion
     {
         'hrsh7th/nvim-cmp',
@@ -20,10 +12,6 @@ return {
             {'L3MON4D3/LuaSnip'},
         },
         config = function ()
-            require'lsp-zero.cmp'.extend({
-                set_sources = 'recommended',
-                set_extra_mappings = true,
-            })
 
             local cmp = require('cmp')
             --local cmp_action = lsp.cmp_action()
@@ -49,40 +37,62 @@ return {
         dependencies = {
             {'williamboman/mason-lspconfig.nvim'},
             {'folke/neodev.nvim'},
-            {
-                'williamboman/mason.nvim',
-                build = function ()
-                    pcall(vim.cmd, 'MasonUpdate')
-                end,
-            },
+            {'williamboman/mason.nvim',},
 
         },
         config = function ()
-            local lsp = require'lsp-zero'
+            require('neodev').setup()
+            require('mason').setup()
 
-            require'neodev'.setup()
+            local lspconfig_defaults = require('lspconfig').util.default_config
+            lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+                'force',
+                lspconfig_defaults.capabilities,
+                require('cmp_nvim_lsp').default_capabilities()
+            )
 
-            lsp.ensure_installed({
-                'clangd', 'cmake', 'lua_ls', 'vimls',
-                'html', 'pyright', 'tsserver', 'hls'
+            vim.api.nvim_create_autocmd('LspAttach', {
+                desc = 'LSP actions',
+                callback = function (event)
+                    print("Attached")
+                    local opts = {buffer = event.buf}
+                    vim.keymap.set('n', '<leader>a', function ()
+                        require('fzf-lua').lsp_code_actions{}
+                    end, opts)
+                    vim.keymap.set('v', '<leader>a', function ()
+                        require('fzf-lua').lsp_code_actions{}
+                    end, opts)
+                    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, opts)
+
+                    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+                    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+                    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+                    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+                    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+                    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+                    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+                    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+                    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+                    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                end,
             })
 
-            lsp.on_attach(function(_, bufnr)
-                lsp.default_keymaps({buffer = bufnr})
-                print("Attached")
-                vim.keymap.set('n', '<leader>a', function ()
-                    require('fzf-lua').lsp_code_actions{}
-                end, {buffer = true})
-                vim.keymap.set('v', '<leader>a', function ()
-                    require('fzf-lua').lsp_code_actions{}
-                end, {buffer = true})
-                vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, {buffer = true})
-            end)
+            require('mason-lspconfig').setup({
+                ensure_installed = {
+                    'lua_ls',
+                    'pyright',
+                    'tsserver',
+                    'clangd',
+                },
+                handlers = {
+                    function(server_name)
+                        require('lspconfig')[server_name].setup({})
+                    end,
+                },
+            })
 
             -- (Optional) Configure lua language server for neovim
-            require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
-
-            lsp.setup()
+            require('lspconfig').lua_ls.setup({})
 
             vim.keymap.set('n','<leader>ss', ':ClangdSwitchSourceHeader<CR>')
         end
