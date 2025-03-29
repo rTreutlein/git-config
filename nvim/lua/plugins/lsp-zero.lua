@@ -54,7 +54,7 @@ return {
             vim.api.nvim_create_autocmd('LspAttach', {
                 desc = 'LSP actions',
                 callback = function (event)
-                    print("Attached")
+                    -- print("Attached")
                     local opts = {buffer = event.buf}
                     vim.keymap.set('n', '<leader>a', function ()
                         require('fzf-lua').lsp_code_actions{}
@@ -78,6 +78,7 @@ return {
             })
 
             require('mason-lspconfig').setup({
+                automatic_installation = true,
                 ensure_installed = {
                     'lua_ls',
                     'pyright',
@@ -88,6 +89,7 @@ return {
                     function(server_name)
                         require('lspconfig')[server_name].setup({})
                     end,
+                    hls = function() end
                 },
             })
 
