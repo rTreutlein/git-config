@@ -43,5 +43,38 @@ vim.keymap.set("t","<Esc>", lazygitEsc, { noremap = true,expr = true })
 vim.keymap.set("n", "<leader>w", ":w<CR>" )
 vim.keymap.set("n", "<leader>x", ":wa<CR>:qa<CR>" )
 
-vim.keymap.set("n", "<Tab>", ":bnext<CR>")
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>")
+
+-- Custom function to skip terminal buffers
+local function navigate_buffers(direction)
+  local current = vim.fn.bufnr()
+  local count = vim.fn.bufnr('$')
+  local new_buf = current
+
+  for _ = 1, count do
+    new_buf = direction == 'next' and new_buf + 1 or new_buf - 1
+    if new_buf < 0 then new_buf = count end
+    if new_buf > count then new_buf = 1 end
+
+    local buftype = vim.fn.getbufvar(new_buf, '&buftype')
+    if buftype ~= 'terminal' and vim.fn.buflisted(new_buf) == 1 then
+      vim.cmd('buffer ' .. new_buf)
+      return
+    end
+  end
+end
+
+-- Key mappings (replace your existing buffer navigation mappings)
+vim.keymap.set('n', '<Tab>', function() navigate_buffers('next') end)
+vim.keymap.set('n', '<S-Tab>', function() navigate_buffers('prev') end)
+
+local function smart_close()
+  if vim.bo.buftype == 'terminal' then
+    vim.api.nvim_buf_delete(0, { force = true })
+  else
+    require('bufferline').cycle(-1)  -- Ensure we have a valid buffer to switch to
+    vim.cmd('bd#')
+  end
+end
+
+vim.keymap.set('n', '<leader>q', smart_close, { desc = "Smart close buffer" })
+

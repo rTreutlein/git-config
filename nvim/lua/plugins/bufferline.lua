@@ -15,6 +15,13 @@ return {
             diagnostics = "nvim_lsp",
             diagnostics_indicator = dia_ind,
             tab_size = 20,
+            custom_filter = function(buf, bufnr)
+                -- Exclude buffers with 'terminal' buftype
+                if vim.bo[buf].buftype == 'terminal' then
+                    return false
+                end
+                return true
+            end
         }
     }
 }
