@@ -1,12 +1,11 @@
 require("config.set")
 require("config.remap")
+require("config.metta")
 
 local api = vim.api
 
 api.nvim_create_autocmd({"BufNewFile","BufRead"},{pattern = {"*.cxxtest"}, command = "set syntax=cpp"})
 
-api.nvim_create_autocmd({"BufWinEnter","BufEnter"}, {command = "if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif"})
+--api.nvim_create_autocmd({"BufWinEnter","BufEnter"}, {command = "if &buftype == 'terminal' | :startinsert | else | :stopinsert | endif"})
 
-vim.filetype.add({extension = {metta = "metta"}})
-
-
+vim.filetype.add({extension = {metta = "metta", pl = "prolog"}})

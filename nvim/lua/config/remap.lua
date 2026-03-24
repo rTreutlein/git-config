@@ -78,3 +78,8 @@ end
 
 vim.keymap.set('n', '<leader>q', smart_close, { desc = "Smart close buffer" })
 
+-- Quickfix navigation
+vim.keymap.set('n', ']q', ':cnext<CR>', { desc = "Quickfix next" })
+vim.keymap.set('n', '[q', ':cprev<CR>', { desc = "Quickfix previous" })
+vim.keymap.set('n', '<leader>co', ':copen<CR>', { desc = "Quickfix open" })
+vim.keymap.set('n', '<leader>cc', ':cclose<CR>', { desc = "Quickfix close" })

@@ -14,4 +14,10 @@ return {
 
     --Movement
     'farmergreg/vim-lastplace', --Open File at last edit location
+
+    --Mason
+    { 'williamboman/mason.nvim', lazy = false, config = function() require("mason").setup() end },
+
+    --Metta queries
+    'rTreutlein/tree-sitter-metta',
 }
